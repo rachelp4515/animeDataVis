@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link href="./styles.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./helpers.js"></script>
+    <script src="./d3pie.js"></script>
+    <script src="./d3Bars.js"></script>
+    <script src="./index.js"></script>
+    <script src="d3bubbbblleeess.js"></script>
+</head>
+
+
+<body>
+    <div class="barChartPage">
+        <h2> Data Visualization of MyAnimeList shows</h2>
+        <p>
+            There are four main demographics of anime that the data has been separated into. Kids, for 12 and under,
+            Shounen for a young male audience between
+            ages 12-18 Shoujo for a female audience between ages 12-18. Seinen is not typically child oriented, and has
+            more adult themes.
+        </p>
+        <!-- <div>
+        Shounen takes up the bulk of the shows on myanime  Seinen comes in second with 7.36, Shoujo close behind with 7.3, and kids comes in last with 6.2.
+        <div id="svg"></div>
+        </div> -->
+
+        <div class="tab">
+            <button class="tablinks" onclick="showData(event, 'a')" id="defaultOpen" z>Show</button>
+            <button class="tablinks" onclick="showData(event, 'b')">Genre</button>
+            <button class="tablinks" onclick="showData(event, 'c')">Views</button>
+        </div>
+
+        <div id='a' class="tabcontent">
+
+            <div class="shounen">
+                <h1> Popularity ratings of top 50 Shounen anime</h1>
+                <p>Shounen has the highest rating anime, with an average score of 7.8</p>
+                <svg id="shounenSvg" width="1000" height="550"></svg>
+            </div>
+            <div class="seinen">
+                <h1>Popularity ratings of top 50 Seinen anime</h1>
+                <p>Seinen comes in second with an rating average of 7.36</p>
+                <svg id="seinenSvg" width="1000" height="550"></svg>
+
+            </div>
+            <div class="shoujo">
+                <h1>Popularity ratings of top 50 Shoujo anime</h1>
+                <p>Shoujo close behind Seinen with a score average of 7.3</p>
+                <svg id="shoujoSvg" width="1000" height="550"></svg>
+
+            </div>
+            <div class="kids">
+                <h1>Popularity ratings of top 50 kids anime</h1>
+                <p>The Kids category comes in last with an score average of 6.2</p>
+                <svg id="kidsSvg" width="1000" height="550"></svg>
+
+            </div>
+
+        </div>
+
+        <div id="b" class="tabcontent">
+            <h4> Shounen</h4>
+            <div id="shounenPie" class="pie"></div>
+            <h4> Seinen</h4>
+            <div id="seinenPie" class="pie"></div>
+            <h4> Shoujo</h4>
+            <div id="shoujoPie" class="pie"></div>
+            <h4> Kids</h4>
+            <div id="kidsPie" class="pie"></div>
+        </div>
+
+        <div id="c" class="tabcontent">
+                <h2>Amount of views for top shows: shounen</h2>
+                <div id="shounenBubbles" class="bubbles"></div>
+
+                <h2>Amount of views for top shows: seinen</h2>
+                <div id="seinenBubbles" class="bubbles"></div>
+
+                <h2>Amount of views for top shows: shoujo</h2>
+                <div id="shoujoBubbles" class="bubbles"></div>
+
+                <h2>Amount of views for top shows: kids</h2>
+                <div id="kidsBubbles" class="bubbles"></div>
+        </div>
+
+
+    </div>
+    <script>
+
+        async function handleData() {
+            const data = await d3.csv('anime-list.csv')
+
+
+            // demographics
+            const shounen = filterByDemo(data, 'Shounen')
+            const seinen = filterByDemo(data, 'Seinen')
+            const shoujo = filterByDemo(data, 'Shoujo')
+            const kids = filterByDemo(data, 'Kids')
+
+
+            const unReduced1 = themeList(shounen)
+            const unReduced2 = themeList(seinen)
+            const unReduced3 = themeList(shoujo)
+            const unReduced4 = themeList(kids)
+
+
+
+            const shounenPie = createOther(unReduced1, .15)
+            const seinenPie = createOther(unReduced2, .23)
+            const shoujoPie = createOther(unReduced3, .15)
+            const kidsPie = createOther(unReduced4, .14)
+
+            drawPie(shounenPie, '#shounenPie')
+            drawPie(seinenPie, '#seinenPie')
+            drawPie(shoujoPie, '#shoujoPie')
+            drawPie(kidsPie, '#kidsPie')
+
+            drawBar(shounen, '#shounenSvg', '#eb459d')
+            drawBar(seinen, '#seinenSvg', '#40b2fd')
+            drawBar(shoujo, '#shoujoSvg', '#6fe99c')
+            drawBar(kids, '#kidsSvg', '#ebe579')
+
+
+
+            const bubbleData1 = ratedBy(shounen)
+            const bubbleData2 = ratedBy(seinen)
+            const bubbleData3 = ratedBy(shoujo)
+            const bubbleData4 = ratedBy(kids)
+
+
+            drawBubble(bubbleData1, '#shounenBubbles')
+            drawBubble(bubbleData2, '#seinenBubbles')
+            drawBubble(bubbleData3, '#shoujoBubbles')
+            drawBubble(bubbleData4, '#kidsBubbles')
+        }
+        handleData()
+        // numFix('3.4M')
+
+    </script>
+    <script>
+        // Get the element with id="defaultOpen" and click on it
+        document.getElementById("defaultOpen").click();
+        </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
